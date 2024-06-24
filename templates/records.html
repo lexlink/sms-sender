@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ჩანაწერები</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+        h {
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        form {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    {% if error_message %}
+    <h3>{{ error_message }}</h3>
+    {% else %}
+    <h1>სმსები:
+        <tr>ჩანაწერების რაოდენობა: {{ sms_count }}</tr>
+        <tr>|</tr>
+        <tr>გაგზავნილი უსტატუსო (Status 0): {{ pending_count }}</tr>
+        <tr>|</tr>
+        <tr>მიუწოდებელი (Status 2): {{undelivered_count}} </tr>
+        <tr>|</tr>
+        <tr>მიწოდებული (Status 1): {{delivered_count}} </tr>
+        <tr>|</tr>
+        <tr>პროვაიდერის წაშლილი (Status 3): {{deleted_by_provider}} </tr>
+    </h1>
+
+    <form method="GET" action="/search">
+        <input type="text" name="search_number" placeholder="Enter a number...">
+        <button type="submit">ძებნა</button>
+    </form>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>
+                <form action="/records" method="get">
+                    <button type="submit" name="sort" value="message_id_asc">&#8593;</button><span>Message ID</span>
+                    <button type="submit" name="sort" value="message_id_desc">&#8595;</button>
+                </form>
+            </th>
+            <th>გაგზავნილი</th>
+            <th>ტექსტი</th>
+            <th>მიწოდებული</th>
+            <th>
+                <form action="/records" method="get">
+                    <button type="submit" name="sort" value="status_id_asc">&#8593;</button><span>Status ID</span>
+                    <button type="submit" name="sort" value="status_id_desc">&#8595;</button>
+                </form>
+            </th>
+            <th>
+                <form action="/records" method="get">
+                    <button type="submit" name="sort" value="timestamp_asc">&#8593;</button><span>დრო</span>
+                    <button type="submit" name="sort" value="timestamp_desc">&#8595;</button>
+                </form>
+            </th>
+        </tr>
+        {% for record in sms_records %}
+        <tr>
+            <td>{{ record._id }}</td>
+            <td>{{ record.message_id }}</td>
+            <td>{{ record.sent_to }}</td>
+            <td>{{ record.sent_text }}</td>
+            <td>{{ record.Delivery }}</td>
+            <td>{{ record.statusId }}</td>
+            <td>{{ record.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+    <h1>Telegram</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Message ID</th>
+            <th>Sent To</th>
+            <th>Sent Text</th>
+            <th>Delivered</th>
+            <th>Timestamp</th>
+
+        </tr>
+        {% for record in telegram_records %}
+        <tr>
+            <td>{{ record._id }}</td>
+            <td>{{ record.chat_user }}</td>
+            <td>{{ record.sent_number }}</td>
+            <td>{{ record.sent_text }}</td>
+            <td>{{ record.delivered }}</td>
+            <td>{{ record.timestamp }}</td>
+
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</body>
+</html>
